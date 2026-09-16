@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morgenoversikt</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23C1702F'/%3E%3Ctext x='32' y='46' font-family='Georgia,serif' font-weight='bold' font-size='42' fill='%23FAFAF7' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FAFAF7;
+    --ink: #1C1C1A;
+    --ink-soft: #6E6A61;
+    --line: #E6E3DA;
+    --accent: #C1702F;   /* the orange — now used everywhere */
+    --up: #2F6B4F;
+    --down: #A63D3D;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "EB Garamond", Garamond, serif;
+    font-size: 17px;
+    line-height: 1.45;
+  }
+
+  /* ---------- Masthead ---------- */
+  header {
+    padding: 30px 32px 20px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .masthead {
+    max-width: 1640px;
+    margin: 0 auto;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  h1 { font-weight: 600; font-size: 34px; letter-spacing: 0.01em; }
+  .dateline { font-size: 16px; font-style: italic; color: var(--ink-soft); }
+  .v-tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- Layout ---------- */
+  main {
+    max-width: 1640px;
+    margin: 0 auto;
+    padding: 28px 32px 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 36px;
+  }
+  @media (max-width: 1280px) {
+    main { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 780px) {
+    main { grid-template-columns: 1fr; gap: 32px; }
+  }
+
+  .col-title {
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    padding-bottom: 8px;
+    margin-bottom: 18px;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  /* ---------- Outlet groups ---------- */
+  .outlet {
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .outlet:last-child { border-bottom: none; margin-bottom: 0; }
+  .outlet-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    min-height: 22px;
+  }
+  .outlet-logo img { height: 22px; width: 22px; border-radius: 3px; }
+  .outlet-logo .fallback-name {
+    display: none;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .outlet-logo.logo-failed img { display: none; }
+  .outlet-logo.logo-failed .fallback-name { display: inline; }
+
+  .news-list { list-style: none; }
+  .news-list li { padding: 5px 0; }
+  .headline { font-weight: 500; font-size: 17.5px; line-height: 1.3; }
+  .headline a { color: inherit; text-decoration: none; }
+  .headline a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .headline .company { font-weight: 700; }
+
+  .feed-status {
+    font-size: 15px;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- Market data ---------- */
+  .subhead {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 4px 0 12px;
+  }
+  .tickers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-bottom: 28px;
+  }
+  .ticker { background: var(--paper); padding: 12px 14px; }
+  .ticker.wide { grid-column: 1 / -1; }
+  .ticker .label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+  }
+  .ticker .value {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 3px;
+  }
+  .ticker .change {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .change.up   { color: var(--up); }
+  .change.down { color: var(--down); }
+  .tick-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 8px;
+  }
+  .avgs {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    text-align: left;
+    white-space: nowrap;
+  }
+  .avgs b {
+    font-weight: 400;
+    opacity: 0.55;
+    margin-right: 3px;
+  }
+  .avgs .up   { color: var(--up); }
+  .avgs .down { color: var(--down); }
+  .ticker .value a {
+    color: inherit;
+    font-size: 13px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* ---------- Dagen til Syver ---------- */
+  .dagen-item { margin-bottom: 22px; }
+  .dagen-item:last-child { margin-bottom: 0; }
+  .dagen-list { list-style: none; }
+  .dagen-list li { padding: 3px 0; font-size: 16.5px; line-height: 1.35; }
+  .dagen-list .year {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-right: 6px;
+  }
+  blockquote {
+    font-size: 18px;
+    font-style: italic;
+    line-height: 1.5;
+    padding-left: 14px;
+    border-left: 2px solid var(--line);
+  }
+  blockquote footer.quote-attr {
+    all: unset;
+    display: block;
+    margin-top: 6px;
+    font-size: 15px;
+    font-style: normal;
+    color: var(--ink-soft);
+  }
+
+  footer.page-foot {
+    max-width: 1640px;
+    margin: 0 auto;
+    padding: 0 32px 36px;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="masthead">
+    <h1>Morgenoversikt</h1>
+    <span class="dateline" id="dato"></span>
+    <span class="v-tag" id="oppdatert">v6.6 &middot; henter nyheter&hellip;</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Column 1: Norwegian news -->
+  <section id="norsk">
+    <div class="col-title">Norske nyheter</div>
+    <div id="norsk-outlets"></div>
+  </section>
+
+  <!-- Column 2: International news -->
+  <section id="intl">
+    <div class="col-title">Internasjonale nyheter</div>
+    <div id="intl-outlets"></div>
+  </section>
+
+  <!-- Column 3: Market intelligence + Dagen til Syver -->
+  <section id="marked">
+    <div class="col-title">Markedsoversikt</div>
+
+    <div class="subhead">Nøkkeltall</div>
+    <div class="tickers">
+      <div class="ticker wide" id="tick-brent">
+        <div class="label">BRENT USD/BBL</div>
+        <div class="tick-body">
+          <div class="tick-main">
+            <div class="value">&hellip;</div>
+            <div class="change">henter</div>
+          </div>
+          <div class="avgs"></div>
+        </div>
+      </div>
+      <div class="ticker" id="tick-btc">
+        <div class="label">BITCOIN USD</div>
+        <div class="tick-body">
+          <div class="tick-main">
+            <div class="value">&hellip;</div>
+            <div class="change">henter</div>
+          </div>
+          <div class="avgs"></div>
+        </div>
+      </div>
+      <div class="ticker" id="tick-gull">
+        <div class="label">GULL USD/UNSE</div>
+        <div class="tick-body">
+          <div class="tick-main">
+            <div class="value">&hellip;</div>
+            <div class="change">henter</div>
+          </div>
+          <div class="avgs"></div>
+        </div>
+      </div>
+      <div class="ticker" id="tick-eurnok">
+        <div class="label">EUR/NOK</div>
+        <div class="tick-body">
+          <div class="tick-main">
+            <div class="value">&hellip;</div>
+            <div class="change">henter</div>
+          </div>
+          <div class="avgs"></div>
+        </div>
+      </div>
+      <div class="ticker" id="tick-usdnok">
+        <div class="label">USD/NOK</div>
+        <div class="tick-body">
+          <div class="tick-main">
+            <div class="value">&hellip;</div>
+            <div class="change">henter</div>
+          </div>
+          <div class="avgs"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subhead">Selskapsnyheter</div>
+    <div class="feed-status" id="selskap-status">Henter&hellip;</div>
+    <ul class="news-list" id="selskap-list"></ul>
+
+  </section>
+
+  <!-- Column 4: Dagen til Syver -->
+  <section id="dagen">
+    <div class="col-title">Dagen til Syver</div>
+
+      <div class="dagen-item">
+        <div class="subhead">I dag i historien</div>
+        <div class="feed-status" id="historie-status">Henter&hellip;</div>
+        <ul class="dagen-list" id="historie-list"></ul>
+      </div>
+
+      <div class="dagen-item">
+        <div class="subhead">Kjente personer</div>
+        <div class="feed-status" id="personer-status">Henter&hellip;</div>
+        <ul class="dagen-list" id="personer-list"></ul>
+      </div>
+
+      <div class="dagen-item">
+        <div class="subhead">Dagens sitat</div>
+        <blockquote>
+          <span id="quote-text"></span>
+          <footer class="quote-attr" id="quote-attr"></footer>
+        </blockquote>
+      </div>
+  </section>
+
+</main>
+
+<footer class="page-foot">
+  Alle seksjoner er live: nyheter, selskapsnyheter, markedsdata og dagens historie. Historisk innhold er på engelsk fra Wikipedia.
+</footer>
+
+<script>
+/* =========================================================
+   KONFIGURASJON — endre feed-adresser her om noe ikke virker
+   ========================================================= */
+
+// Brent spotpris krever gratis nøkkel fra https://www.oilpriceapi.com
+// (registrering uten kort). Lim nøkkelen inn mellom anførselstegnene og
+// lagre — da bytter Brent-flisen fra månedssnitt til ekte spotpris.
+// NB: Ikke del filen med andre etter at nøkkelen er limt inn.
+const OILPRICE_API_KEY = "";
+const FEEDS = {
+  norsk: [
+    { name: "Sunnmørsposten", domain: "smp.no",          logo: "https://icons.duckduckgo.com/ip3/smp.no.ico",             urls: ["https://www.smp.no/rss", "https://news.google.com/rss/search?q=site%3Asmp.no&hl=no&gl=NO&ceid=NO:no"], stripSuffix: " - Sunnmørsposten" },
+    { name: "NRK",            domain: "nrk.no",          logo: "https://icons.duckduckgo.com/ip3/nrk.no.ico",            url: "https://www.nrk.no/toppsaker.rss" },
+    { name: "VG",             domain: "vg.no",           logo: "https://icons.duckduckgo.com/ip3/vg.no.ico",             url: "https://www.vg.no/rss/feed/" },
+    { name: "Aftenposten",    domain: "aftenposten.no",  logo: "https://icons.duckduckgo.com/ip3/aftenposten.no.ico",    url: "https://www.aftenposten.no/rss" },
+    { name: "DN",             domain: "dn.no",           logo: "https://icons.duckduckgo.com/ip3/dn.no.ico",             url: "https://services.dn.no/api/feed/rss/" },
+    { name: "Finansavisen",   domain: "finansavisen.no", logo: "https://icons.duckduckgo.com/ip3/finansavisen.no.ico",   urls: ["https://news.google.com/rss/search?q=site%3Afinansavisen.no%20when%3A7d&hl=no&gl=NO&ceid=NO:no", "https://news.google.com/rss/search?q=site:finansavisen.no&hl=no&gl=NO&ceid=NO:no"], stripSuffix: " - Finansavisen" }
+  ],
+  intl: [
+    { name: "The Kyiv Independent", domain: "kyivindependent.com", logo: "https://icons.duckduckgo.com/ip3/kyivindependent.com.ico", url: "https://news.google.com/rss/search?q=site%3Akyivindependent.com%20%28war%20OR%20strike%20OR%20drone%20OR%20offensive%20OR%20front%20OR%20missile%20OR%20troops%29&hl=en-US&gl=US&ceid=US:en", stripSuffix: " - The Kyiv Independent" },
+    { name: "Financial Times",     domain: "ft.com",          logo: "https://www.google.com/s2/favicons?domain=ft.com&sz=64",  url: "https://www.ft.com/rss/home" },
+    { name: "Wall Street Journal", domain: "wsj.com",         logo: "https://icons.duckduckgo.com/ip3/wsj.com.ico",            url: "https://feeds.content.dowjones.io/public/rss/RSSWorldNews" },
+    { name: "The Economist",       domain: "economist.com",   logo: "https://icons.duckduckgo.com/ip3/economist.com.ico",      url: "https://www.economist.com/finance-and-economics/rss.xml" },
+    { name: "The Guardian",        domain: "theguardian.com", logo: "https://icons.duckduckgo.com/ip3/theguardian.com.ico",    url: "https://www.theguardian.com/international/rss" }
+  ]
+};
+
+const HEADLINES_PER_OUTLET = 3;
+// Primærtjeneste: rss2json (vant nettverkstesten). Gamle proxyer beholdes som reserve.
+const RSS2JSON = url => "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url);
+const BACKUP_PROXIES = [
+  url => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
+  url => "https://test.cors.workers.dev/?" + url,
+  url => "https://cors.eu.org/" + url,
+  url => "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(url),
+  url => "https://corsproxy.io/?url=" + encodeURIComponent(url)
+];
+const TIMEOUT_MS = 12000;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* =========================================================
+   Dato i masthead
+   ========================================================= */
+const d = new Date();
+document.getElementById("dato").textContent =
+  d.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+/* =========================================================
+   Dagens sitat — roterer med dag i året
+   ========================================================= */
+const quotes = [
+  { text: "Courage is grace under pressure.", attr: "Ernest Hemingway" },
+  { text: "You have power over your mind — not outside events. Realize this, and you will find strength.", attr: "Marcus Aurelius, stoisk filosof og romersk keiser" },
+  { text: "We suffer more often in imagination than in reality.", attr: "Seneca, stoisk filosof" },
+  { text: "It's not what happens to you, but how you react to it that matters.", attr: "Epiktet, stoisk filosof" },
+  { text: "Like the generations of leaves, the lives of mortal men.", attr: "Homer, Iliaden" },
+  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", attr: "Tilskrevet Winston Churchill" },
+  { text: "Faced with crisis, the man of character falls back on himself.", attr: "Charles de Gaulle" },
+  { text: "Peace is not absence of conflict, it is the ability to handle conflict by peaceful means.", attr: "Ronald Reagan" },
+  { text: "You may have to fight a battle more than once to win it.", attr: "Margaret Thatcher" }
+];
+const start = new Date(d.getFullYear(), 0, 0);
+const dayOfYear = Math.floor((d - start) / 86400000);
+const q = quotes[dayOfYear % quotes.length];
+document.getElementById("quote-text").textContent = "«" + q.text + "»";
+document.getElementById("quote-attr").textContent = "— " + q.attr;
+
+/* =========================================================
+   Markedsdata (v3)
+   - Valuta: Frankfurter (ECB) — gratis, uten nøkkel, uten proxy
+   - OSEBX og Brent: Yahoo Finance via reserve-proxyene (beste forsøk);
+     faller tilbake til lenke mot live-kurs om proxyene er blokkert
+   ========================================================= */
+
+function fmtNo(value, decimals = 2) {
+  // Period as decimal symbol, space as thousands separator (e.g. 2 091.00)
+  return value.toLocaleString("en-US", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  }).replace(/,/g, "\u2009");
+}
+
+// Prosentvis endring fra n handledager tilbake til siste kurs
+function pctChange(closes, daysBack) {
+  const last = closes[closes.length - 1];
+  const idx = Math.max(0, closes.length - 1 - daysBack);
+  const base = closes[idx];
+  return ((last - base) / base) * 100;
+}
+
+// U = uke (5 handledager), M = måned (21), Å = år — vist som endring i %
+function renderAvgs(el, closes) {
+  const avgsEl = el.querySelector(".avgs");
+  if (!closes || closes.length < 2) { avgsEl.textContent = ""; return; }
+  const row = (label, pct) => {
+    const cls = pct >= 0 ? "up" : "down";
+    const sign = pct >= 0 ? "+" : "−";
+    return "<div><b>" + label + "</b><span class=\"" + cls + "\">" +
+           sign + fmtNo(Math.abs(pct), 1) + " %</span></div>";
+  };
+  avgsEl.innerHTML =
+    row("U", pctChange(closes, 5)) +
+    row("M", pctChange(closes, 21)) +
+    row("Å", pctChange(closes, closes.length - 1));
+}
+
+function setTicker(id, value, changePct, closes, decimals) {
+  const el = document.getElementById(id);
+  el.querySelector(".value").textContent = fmtNo(value, decimals ?? 2);
+  const changeEl = el.querySelector(".change");
+  if (changePct === null) {
+    changeEl.textContent = "";
+  } else {
+    const sign = changePct >= 0 ? "+" : "−";
+    changeEl.textContent = sign + fmtNo(Math.abs(changePct)) + " %";
+    changeEl.classList.add(changePct >= 0 ? "up" : "down");
+  }
+  renderAvgs(el, closes);
+}
+
+function setTickerFallback(id, linkUrl) {
+  const el = document.getElementById(id);
+  el.querySelector(".value").innerHTML =
+    '<a href="' + linkUrl + '" target="_blank" rel="noopener">se live kurs</a>';
+  el.querySelector(".change").textContent = "kilde blokkert";
+  el.querySelector(".avgs").textContent = "";
+}
+
+async function fetchJson(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    const resp = await fetch(url, { signal: controller.signal });
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    return await resp.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Valuta: ett års dagskurser fra ECB — gir både endring og periodene
+// Frankfurter flyttet til frankfurter.dev; vi prøver ny adresse først, gammel etterpå
+async function loadCurrency(pair, tickerId) {
+  const today = new Date();
+  const yearAgo = new Date(today.getTime() - 370 * 86400000);
+  const iso = dt => dt.toISOString().slice(0, 10);
+  const range = iso(yearAgo) + ".." + iso(today);
+  const hosts = [
+    "https://api.frankfurter.dev/v1/" + range + "?base=" + pair + "&symbols=NOK",
+    "https://api.frankfurter.app/" + range + "?from=" + pair + "&to=NOK"
+  ];
+  for (const url of hosts) {
+    try {
+      const data = await fetchJson(url);
+      const dates = Object.keys(data.rates).sort();
+      if (dates.length === 0) throw new Error("Ingen kurser");
+      const closes = dates.map(dt => data.rates[dt].NOK);
+      const latest = closes[closes.length - 1];
+      const prev = closes.length > 1 ? closes[closes.length - 2] : null;
+      const changePct = prev ? ((latest - prev) / prev) * 100 : null;
+      setTicker(tickerId, latest, changePct, closes);
+      return;
+    } catch (err) {
+      // prøv neste adresse
+    }
+  }
+  // Reserve: open.er-api.com gir siste kurs, men ingen historikk
+  try {
+    const data = await fetchJson("https://open.er-api.com/v6/latest/" + pair);
+    setTicker(tickerId, data.rates.NOK, null, null);
+  } catch (err2) {
+    setTickerFallback(tickerId, "https://www.norges-bank.no/tema/Statistikk/Valutakurser/");
+  }
+}
+
+// Bitcoin og gull: CoinGecko — gratis, uten nøkkel, uten proxy.
+// Ett års dagskurser i ett kall gir både spot, dagsendring og periodene.
+// Gull måles via PAX Gold, som er dekket 1:1 av fysisk gull (1 token = 1 unse).
+async function loadCoinGecko(coinId, tickerId, decimals, fallbackUrl) {
+  const url = "https://api.coingecko.com/api/v3/coins/" + coinId +
+              "/market_chart?vs_currency=usd&days=365";
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const data = await fetchJson(url);
+      const closes = (data.prices ?? []).map(p => p[1]).filter(v => typeof v === "number");
+      if (closes.length < 2) throw new Error("For lite data");
+      const price = closes[closes.length - 1];
+      const prev = closes[closes.length - 2];
+      const changePct = ((price - prev) / prev) * 100;
+      setTicker(tickerId, price, changePct, closes, decimals);
+      return;
+    } catch (err) {
+      if (attempt === 1) await sleep(4000);
+    }
+  }
+  setTickerFallback(tickerId, fallbackUrl);
+}
+
+
+
+// Brent i USD per fat (bbl) — den internasjonale noteringen.
+// Med API-nøkkel: ekte spotpris fra OilPriceAPI.
+// Uten nøkkel: siste FULLFØRTE måneds snitt fra EIA (via DBnomics) — aldri
+// inneværende måned, som bare er EIAs prognose (lurte oss i v6.2), og aldri
+// serier uten fersk observasjonsdato (lurte oss i v6.1).
+async function loadBrent(tickerId, fallbackUrl) {
+  const el = document.getElementById(tickerId);
+  const labelEl = el.querySelector(".label");
+  // 1) Spotpris (krever gratis nøkkel — se KONFIGURASJON øverst)
+  if (OILPRICE_API_KEY) {
+    const oilApi = async url => {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+      try {
+        const resp = await fetch(url, {
+          headers: { "Authorization": "Token " + OILPRICE_API_KEY },
+          signal: controller.signal
+        });
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        return await resp.json();
+      } finally { clearTimeout(timer); }
+    };
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const data = await oilApi("https://api.oilpriceapi.com/v1/prices/latest?by_code=BRENT_CRUDE_USD");
+        const usd = data?.data?.price;
+        if (typeof usd !== "number") throw new Error("Uventet svar");
+
+        // Historikk (beste forsøk): gir dagsendring og U/M/Å.
+        // Prosentendringer er valutauavhengige, så USD-serien kan brukes direkte.
+        let closes = null;
+        let changePct = null;
+        try {
+          const hist = await oilApi("https://api.oilpriceapi.com/v1/prices/past_year?by_code=BRENT_CRUDE_USD");
+          const arr = hist?.data?.prices ?? hist?.prices ?? (Array.isArray(hist?.data) ? hist.data : []);
+          const byDay = new Map();
+          arr.filter(x => typeof x?.price === "number" && x?.created_at)
+             .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+             .forEach(x => byDay.set(String(x.created_at).slice(0, 10), x.price));
+          if (byDay.size > 21) {
+            const days = [...byDay.keys()];
+            closes = [...byDay.values()];
+            const today = new Date().toISOString().slice(0, 10);
+            // Dagsendring: spot mot forrige dags sluttkurs
+            const prev = days[days.length - 1] === today && closes.length > 1
+              ? closes[closes.length - 2]
+              : closes[closes.length - 1];
+            changePct = ((usd - prev) / prev) * 100;
+            if (days[days.length - 1] !== today) closes = [...closes, usd];
+          }
+        } catch (err) { /* spot uten historikk er fortsatt nyttig */ }
+
+        labelEl.textContent = "BRENT USD/BBL (SPOT)";
+        setTicker(tickerId, usd, changePct, closes);
+        return;
+      } catch (err) {
+        if (attempt === 1) await sleep(4000);
+      }
+    }
+    // Spot feilet — fall videre til månedssnittet under
+  }
+
+  // 2) Siste FULLFØRTE måned fra EIA (STEO via DBnomics), maks to måneder gammel
+  try {
+    const data = await fetchJson("https://api.db.nomics.world/v22/series/EIA/STEO/BREPUUS.M?observations=1&format=json");
+    const doc = data?.series?.docs?.[0];
+    const period = doc?.period ?? [];
+    const values = doc?.value ?? [];
+    const now = new Date();
+    const nowKey = now.toISOString().slice(0, 7);
+    const oldest = new Date(now.getFullYear(), now.getMonth() - 2, 1).toISOString().slice(0, 7);
+    let idx = -1;
+    for (let i = 0; i < period.length; i++) {
+      // Strengt FØR inneværende måned: inneværende måned er bare prognose
+      if (typeof values[i] === "number" && String(period[i]).slice(0, 7) < nowKey) idx = i;
+    }
+    if (idx > 0 && String(period[idx]).slice(0, 7) >= oldest) {
+      const price = values[idx];
+      const prev = values[idx - 1];
+      labelEl.textContent = "BRENT USD/BBL (EIA MND.SNITT " + String(period[idx]).slice(0, 7) + ")";
+      setTicker(tickerId, price, ((price - prev) / prev) * 100, null);
+      const yearIdx = idx - 12;
+      if (yearIdx >= 0 && typeof values[yearIdx] === "number") {
+        const pct = ((price - values[yearIdx]) / values[yearIdx]) * 100;
+        const cls = pct >= 0 ? "up" : "down";
+        const sign = pct >= 0 ? "+" : "−";
+        el.querySelector(".avgs").innerHTML =
+          '<div><b>Å</b><span class="' + cls + '">' + sign + fmtNo(Math.abs(pct), 1) + " %</span></div>";
+      }
+      return;
+    }
+  } catch (err) { /* fall tilbake til lenke */ }
+  setTickerFallback(tickerId, fallbackUrl);
+}
+
+function loadMarkets() {
+  loadCurrency("EUR", "tick-eurnok");
+  loadCurrency("USD", "tick-usdnok");
+  loadCoinGecko("bitcoin", "tick-btc", 0,
+    "https://www.coingecko.com/en/coins/bitcoin");
+  loadCoinGecko("pax-gold", "tick-gull", 0,
+    "https://www.gold.org/goldhub/data/gold-prices");
+  loadBrent("tick-brent",
+    "https://www.investing.com/commodities/brent-oil");
+}
+
+/* =========================================================
+   Selskapsnyheter (v4)
+   Smalt nett: Google Nyheter-søk per selskap, avgrenset til
+   selskapets eget nettsted og sentral næringslivspresse.
+   ========================================================= */
+const BUSINESS_SITES = ["e24.no", "dn.no", "finansavisen.no", "kapital.no", "reuters.com"];
+// q: søkeord for Google Nyheter (intitle: krever ordet i selve overskriften)
+// match: overskriften må treffe dette mønsteret; exclude: ...og ikke dette
+const COMPANIES = [
+  { name: "Equinor",              q: 'Equinor',            match: '\\bEquinor\\b',            own: "equinor.com" },
+  { name: "DNB",                  q: 'DNB',                match: '\\bDNB\\b',                own: "dnb.no" },
+  { name: "Kongsberg Gruppen",    q: 'Kongsberg',          match: '\\bKongsberg\\b',          exclude: 'Kongsberg (Automotive|kommune)', own: "kongsberg.com" },
+  { name: "Aker BP",              q: '"Aker BP"',          match: '\\bAker BP\\b',            own: "akerbp.com" },
+  { name: "Telenor",              q: 'Telenor',            match: '\\bTelenor\\b',            own: "telenor.com" },
+  { name: "Norsk Hydro",          q: 'Hydro',              match: '\\bHydro\\b',              exclude: 'Hydrogen', own: "hydro.com" },
+  { name: "Gjensidige",           q: 'Gjensidige',         match: '\\bGjensidige\\b',         own: "gjensidige.no" },
+  { name: "Vår Energi",           q: '"Vår Energi"',       match: '\\bVår Energi\\b',         own: "varenergi.no" },
+  { name: "Aker ASA",             q: 'Aker',               match: '\\bAker\\b(?! ?(BP|Solutions|BioMarine|Horizons|Carbon|Maritime))', own: "aker.no" },
+  { name: "Yara",                 q: 'Yara',               match: '\\bYara\\b',               own: "yara.com" },
+  { name: "Aibel",                q: 'Aibel',              match: '\\bAibel\\b',              own: "aibel.com" },
+  { name: "Mowi",                 q: 'Mowi',               match: '\\bMowi\\b',               own: "mowi.com" },
+  { name: "SalMar",               q: 'SalMar',             match: '\\bSalMar\\b',             own: "salmar.no" },
+  { name: "Aker Solutions",       q: '"Aker Solutions"',   match: '\\bAker Solutions\\b',     own: "akersolutions.com" },
+  { name: "Subsea 7",             q: 'Subsea',             match: '\\bSubsea ?7\\b',          own: "subsea7.com" },
+  { name: "Wallenius Wilhelmsen", q: 'Wallenius',          match: '\\bWallenius\\b',          own: "walleniuswilhelmsen.com" }
+];
+const COMPANY_TOTAL = 12;      // antall overskrifter i listen totalt
+const COMPANY_MAX_EACH = 2;    // maks per selskap, så ingen dominerer
+
+// Selskapene spørres i fire samlede søk (skånsomt mot gratistjenesten);
+// hver overskrift sorteres til riktig selskap via match-mønstrene.
+const COMPANY_GROUPS = [
+  ["Equinor", "DNB", "Telenor", "Yara"],
+  ["Kongsberg Gruppen", "Norsk Hydro", "Gjensidige", "Mowi"],
+  ["Aker BP", "Aker Solutions", "Aker ASA", "Vår Energi"],
+  ["SalMar", "Subsea 7", "Wallenius Wilhelmsen", "Aibel"]
+];
+
+function groupFeedUrl(names) {
+  const members = names.map(n => COMPANIES.find(c => c.name === n));
+  // Aker-selskapene dekkes alle av intitle:Aker — unngå doble søkeord
+  const terms = [...new Set(members.map(c => "intitle:" + c.q.replace('"Aker BP"', 'Aker').replace('"Aker Solutions"', 'Aker')))];
+  // Kun næringslivspresse: selskapenes egne domener ga produktsider, ikke nyheter
+  const sites = BUSINESS_SITES.map(s => "site:" + s).join(" OR ");
+  const q = "(" + terms.join(" OR ") + ") (" + sites + ")";
+  return "https://news.google.com/rss/search?q=" + encodeURIComponent(q) +
+         "&hl=no&gl=NO&ceid=NO:no";
+}
+
+// Sidetitler som ikke er nyhetsartikler (kurssider o.l.)
+const JUNK_PATTERNS = [/dn investor/i, /aksjekurs/i, /børsmelding(er)?$/i];
+function isJunkTitle(title) {
+  return JUNK_PATTERNS.some(re => re.test(title));
+}
+
+// Finn selskapet en overskrift hører hjemme hos — eller ingen
+function classifyTitle(title) {
+  for (const c of COMPANIES) {
+    if (titleBelongsTo(c, title)) return c.name;
+  }
+  return null;
+}
+
+// Vaktpost: overskriften må selv nevne selskapet — ellers forkastes den
+function titleBelongsTo(c, title) {
+  if (!new RegExp(c.match, "i").test(title)) return false;
+  if (c.exclude && new RegExp(c.exclude, "i").test(title)) return false;
+  return true;
+}
+
+// Google Nyheter avslutter titler med " - Kilde"; fjern det
+function stripGoogleSource(title) {
+  return title.replace(/\s[-–—]\s[^-–—]+$/, "").trim();
+}
+
+// Børsmeldinger roper ofte: "AKRBP: MELDING I STORE BOKSTAVER".
+// Fjern ticker-prefikser og senk store bokstaver til vanlig setning.
+function cleanCompanyTitle(title) {
+  let t = stripGoogleSource(title);
+  t = t.replace(/^[A-Z0-9ÆØÅ.]{2,8}:\s*/, "");                 // "AKRBP: " / "GJF: "
+  t = t.replace(/^[A-Za-zÆØÅæøå0-9 .]{2,25} ASA:\s*/, "");     // "Aker BP ASA: "
+  const letters = t.replace(/[^A-Za-zÆØÅæøå]/g, "");
+  const upper = letters.replace(/[^A-ZÆØÅ]/g, "");
+  if (letters.length > 12 && upper.length / letters.length > 0.7) {
+    t = t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
+  }
+  return t.trim();
+}
+
+// Samme sak, ulik ordlyd: sammenlign ordene to overskrifter deler
+function titleTokens(title) {
+  return new Set(title.toLowerCase().split(/[^a-zæøåa-z0-9]+/i).filter(w => w.length > 1));
+}
+function similarTitles(a, b) {
+  const ta = titleTokens(a), tb = titleTokens(b);
+  if (ta.size < 3 || tb.size < 3) return false;
+  let common = 0;
+  for (const w of ta) if (tb.has(w)) common++;
+  return common / Math.min(ta.size, tb.size) >= 0.6;
+}
+
+// Slå sammen alle selskapsfeeds: nyeste først, maks 2 per selskap, uten duplikater
+function mergeCompanyItems(perCompany) {
+  const all = [];
+  for (const { company, items } of perCompany) {
+    items.slice(0, 10).forEach(item => {
+      all.push({
+        company,
+        title: item.title,
+        link: item.link,
+        time: item.date instanceof Date && !isNaN(item.date) ? item.date.getTime() : 0
+      });
+    });
+  }
+  all.sort((a, b) => b.time - a.time);
+  const seen = new Set();
+  const perCount = {};
+  const out = [];
+  for (const item of all) {
+    const key = item.title.toLowerCase();
+    if (seen.has(key)) continue;
+    if ((perCount[item.company] ?? 0) >= COMPANY_MAX_EACH) continue;
+    // Samme sak med annen ordlyd? Behold den nyeste (som kom først i listen)
+    if (out.some(o => o.company === item.company && similarTitles(o.title, item.title))) continue;
+    seen.add(key);
+    perCount[item.company] = (perCount[item.company] ?? 0) + 1;
+    out.push(item);
+    if (out.length >= COMPANY_TOTAL) break;
+  }
+  return out;
+}
+
+async function loadCompanies() {
+  const status = document.getElementById("selskap-status");
+  const list = document.getElementById("selskap-list");
+  const jobs = COMPANY_GROUPS.map(async names => {
+    try {
+      return await fetchFeed(groupFeedUrl(names));
+    } catch (err) {
+      return [];
+    }
+  });
+  const groupResults = await Promise.all(jobs);
+  // Sorter hver overskrift til riktig selskap; forkast dem som ikke hører hjemme
+  const byCompany = {};
+  for (const items of groupResults) {
+    for (const item of items) {
+      const title = cleanCompanyTitle(item.title);
+      if (title.length < 15) continue; // nettstedsseksjoner, ikke overskrifter
+      if (isJunkTitle(title)) continue; // kurssider o.l., ikke artikler
+      const company = classifyTitle(title);
+      if (!company) continue;
+      (byCompany[company] ??= []).push({ ...item, title });
+    }
+  }
+  const perCompany = Object.entries(byCompany)
+    .map(([company, items]) => ({ company, items }));
+  const merged = mergeCompanyItems(perCompany);
+  if (merged.length === 0) {
+    status.textContent = "Fikk ikke hentet selskapsnyheter nå.";
+    return;
+  }
+  status.remove();
+  merged.forEach(item => {
+    const li = document.createElement("li");
+    const div = document.createElement("div");
+    div.className = "headline";
+    const a = document.createElement("a");
+    a.href = item.link || "#";
+    a.target = "_blank";
+    a.rel = "noopener";
+    const strong = document.createElement("span");
+    strong.className = "company";
+    strong.textContent = item.company + ": ";
+    a.appendChild(strong);
+    a.appendChild(document.createTextNode(item.title));
+    div.appendChild(a);
+    li.appendChild(div);
+    list.appendChild(li);
+  });
+}
+
+/* =========================================================
+   Dagen til Syver: Wikipedias «on this day» (v5)
+   Gratis, uten nøkkel, uten proxy. Innholdet er på engelsk —
+   norsk Wikipedia tilbyr ikke tilsvarende tjeneste.
+   ========================================================= */
+const WAR_WORDS = /\b(war|battle|invasion|invade[sd]?|treaty|siege|army|armies|troops|allied|allies|nazi|soviet|wehrmacht|luftwaffe|bombing|bombed|offensive|surrender|armistice|occupation|occupied|liberat(ed|ion)|regiment|naval|fleet|attack(ed|s)?|forces)\b/i;
+
+function pickEvents(events, count) {
+  const war = events.filter(e => WAR_WORDS.test(e.text));
+  const rest = events.filter(e => !WAR_WORDS.test(e.text));
+  return [...war, ...rest].slice(0, count)
+    .sort((a, b) => (a.year ?? 0) - (b.year ?? 0));
+}
+
+function personLine(entry) {
+  // Wikipedias tekst inneholder allerede en beskrivelse ("Navn, yrke")
+  return (entry.text || "") + " (" + entry.year + ")";
+}
+
+async function loadOnThisDay() {
+  const histStatus = document.getElementById("historie-status");
+  const persStatus = document.getElementById("personer-status");
+  const histList = document.getElementById("historie-list");
+  const persList = document.getElementById("personer-list");
+  const now = new Date();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  const url = "https://en.wikipedia.org/api/rest_v1/feed/onthisday/all/" + mm + "/" + dd;
+  try {
+    const data = await fetchJson(url);
+
+    // Historiske hendelser: krigsrelaterte prioriteres, deretter kronologisk
+    const events = pickEvents(data.events ?? [], 3);
+    if (events.length > 0) {
+      histStatus.remove();
+      events.forEach(e => {
+        const li = document.createElement("li");
+        const year = document.createElement("span");
+        year.className = "year";
+        year.textContent = e.year;
+        li.appendChild(year);
+        li.appendChild(document.createTextNode(e.text));
+        histList.appendChild(li);
+      });
+    } else {
+      histStatus.textContent = "Ingen hendelser funnet i dag.";
+    }
+
+    // Kjente personer: to fødte, to døde (nyeste først = mest gjenkjennelige)
+    const births = (data.births ?? []).filter(p => p.pages?.[0]?.description).slice(0, 2);
+    const deaths = (data.deaths ?? []).filter(p => p.pages?.[0]?.description).slice(0, 2);
+    if (births.length + deaths.length > 0) {
+      persStatus.remove();
+      const rows = [
+        ...births.map(p => ({ label: "Født", text: personLine(p) })),
+        ...deaths.map(p => ({ label: "Død", text: personLine(p) }))
+      ];
+      rows.forEach(r => {
+        const li = document.createElement("li");
+        const label = document.createElement("span");
+        label.className = "year";
+        label.textContent = r.label;
+        li.appendChild(label);
+        li.appendChild(document.createTextNode(r.text));
+        persList.appendChild(li);
+      });
+    } else {
+      persStatus.textContent = "Ingen personer funnet i dag.";
+    }
+  } catch (err) {
+    histStatus.textContent = "Fikk ikke hentet historiske hendelser nå (" + err.message + ").";
+    persStatus.textContent = "Fikk ikke hentet kjente personer nå.";
+  }
+}
+
+/* =========================================================
+   RSS-motor
+   ========================================================= */
+
+// Build the skeleton for one outlet (logo + empty list)
+function buildOutlet(feed) {
+  const wrap = document.createElement("div");
+  wrap.className = "outlet";
+  wrap.innerHTML =
+    '<div class="outlet-logo">' +
+      '<img src="' + feed.logo + '" alt="' + feed.name + '" onerror="this.parentElement.classList.add(\'logo-failed\')">' +
+      '<span class="fallback-name">' + feed.name + '</span>' +
+    '</div>' +
+    '<div class="feed-status">Henter&hellip;</div>' +
+    '<ul class="news-list"></ul>';
+  return wrap;
+}
+
+// Primary route: rss2json returns the feed as ready-parsed JSON
+async function fetchViaRss2json(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    const resp = await fetch(RSS2JSON(url), { signal: controller.signal });
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const data = await resp.json();
+    if (data.status !== "ok" || !Array.isArray(data.items)) {
+      throw new Error(data.message || "rss2json: " + data.status);
+    }
+    const parsed = data.items
+      .map(item => ({
+        title: (item.title || "").trim(),
+        link: item.link || "",
+        date: item.pubDate ? new Date(item.pubDate.replace(" ", "T") + (item.pubDate.includes("Z") ? "" : "Z")) : null
+      }))
+      .filter(i => i.title);
+    if (parsed.length === 0) throw new Error("Tom feed");
+    return parsed;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Backup route: raw XML via generic proxy
+async function fetchViaProxy(proxy, url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    const resp = await fetch(proxy(url), { signal: controller.signal });
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const text = await resp.text();
+    const xml = new DOMParser().parseFromString(text, "text/xml");
+    if (xml.querySelector("parsererror")) throw new Error("Ugyldig XML");
+    // RSS uses <item>, Atom uses <entry> — support both
+    let items = [...xml.querySelectorAll("item")];
+    if (items.length === 0) items = [...xml.querySelectorAll("entry")];
+    const parsed = items.map(item => {
+      const title = item.querySelector("title")?.textContent?.trim() ?? "";
+      let link = item.querySelector("link")?.textContent?.trim() ?? "";
+      if (!link) link = item.querySelector("link")?.getAttribute("href") ?? "";
+      const dateText = item.querySelector("pubDate")?.textContent ??
+                       item.querySelector("updated")?.textContent ?? null;
+      const date = dateText ? new Date(dateText) : null;
+      return { title, link, date };
+    }).filter(i => i.title);
+    if (parsed.length === 0) throw new Error("Tom feed");
+    return parsed;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// rss2json first, then each backup proxy in order
+async function fetchFeed(url) {
+  let lastError = null;
+  try {
+    return await fetchViaRss2json(url);
+  } catch (err) {
+    lastError = err;
+  }
+  for (const proxy of BACKUP_PROXIES) {
+    try {
+      return await fetchViaProxy(proxy, url);
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError ?? new Error("Ingen tjeneste svarte");
+}
+
+// Load one outlet: fill its list, or show a polite error
+async function loadOutlet(feed, container) {
+  const el = buildOutlet(feed);
+  container.appendChild(el);
+  const status = el.querySelector(".feed-status");
+  const list = el.querySelector(".news-list");
+  const urls = feed.urls ?? [feed.url];
+  try {
+    let items = null;
+    let lastErr = null;
+    for (let attempt = 1; attempt <= 2 && !items; attempt++) {
+      for (const url of urls) {
+        try {
+          items = await fetchFeed(url);
+          break;
+        } catch (err) { lastErr = err; }
+      }
+      if (!items && attempt === 1) {
+        status.textContent = "Prøver igjen\u2026";
+        await sleep(4000); // flaky er ikke blokkert: ett nytt forsøk hjelper ofte
+      }
+    }
+    if (!items) throw lastErr ?? new Error("Alle adresser feilet");
+    status.remove();
+    // Nyeste først: feedens egen rekkefølge er ikke alltid kronologisk
+    const dated = items.filter(i => i.date instanceof Date && !isNaN(i.date));
+    const sorted = dated.length >= items.length / 2
+      ? [...items].sort((a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0))
+      : items;
+    sorted.slice(0, HEADLINES_PER_OUTLET).forEach(item => {
+      let title = item.title;
+      // Google News appends " - Kildenavn" to titles; remove it when configured
+      if (feed.stripSuffix && title.endsWith(feed.stripSuffix)) {
+        title = title.slice(0, -feed.stripSuffix.length);
+      }
+      const li = document.createElement("li");
+      const div = document.createElement("div");
+      div.className = "headline";
+      const a = document.createElement("a");
+      a.href = item.link || "#";
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = title;
+      div.appendChild(a);
+      li.appendChild(div);
+      list.appendChild(li);
+    });
+    return true;
+  } catch (err) {
+    status.textContent = "Fikk ikke hentet " + feed.name + " nå (" + err.message + ").";
+    return false;
+  }
+}
+
+// Load all feeds in parallel and report status in the masthead
+async function loadAll() {
+  const jobs = [
+    ...FEEDS.norsk.map(f => loadOutlet(f, document.getElementById("norsk-outlets"))),
+    ...FEEDS.intl.map(f => loadOutlet(f, document.getElementById("intl-outlets")))
+  ];
+  const results = await Promise.all(jobs);
+  const ok = results.filter(Boolean).length;
+  const total = results.length;
+  const t = new Date().toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
+  document.getElementById("oppdatert").textContent =
+    "v6.6 · " + ok + " av " + total + " kilder · oppdatert " + t;
+}
+
+loadAll();
+loadMarkets();
+loadCompanies();
+loadOnThisDay();
+</script>
+
+</body>
+</html>
